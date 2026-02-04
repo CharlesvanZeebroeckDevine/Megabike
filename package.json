@@ -1,0 +1,15 @@
+{
+    "name": "megabike-serverless",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "cd frontend && npm install && npm run build",
+        "vercel-build": "cd frontend && npm install && npm run build"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.39.0",
+        "dotenv": "^17.2.3",
+        "jsonwebtoken": "^9.0.2",
+        "node-fetch": "^3.3.2",
+        "supabase": "^2.70.5"
+    }
+}

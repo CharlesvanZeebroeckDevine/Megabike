@@ -1,0 +1,21 @@
+services:
+  # Frontend only (Note: Login function /api won't work in simple docker-compose without Vercel emulation)
+  frontend:
+    build: ./frontend
+    container_name: react_service
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  # Ingestion worker (Use this to run scripts)
+  ingestion:
+    build: ./ingest
+    container_name: ingestion_worker
+    env_file: .env
+    volumes:
+      - ./ingest:/app/ingest
+      - ./references:/app/references
+    command: tail -f /dev/null # Keep alive to run commands via docker exec
