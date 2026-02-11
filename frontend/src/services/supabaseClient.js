@@ -22,6 +22,8 @@ export function getAuthToken() {
 }
 
 export function setAuthToken(token) {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+
     if (!token) {
         localStorage.removeItem(TOKEN_STORAGE_KEY);
         // Reset to anon client

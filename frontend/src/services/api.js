@@ -7,8 +7,8 @@ export { getAuthToken, setAuthToken, parseJwt };
 
 // --- CONFIG ---
 const OFFLINE_MODE = process.env.REACT_APP_OFFLINE === "true";
-export const LOCK_DATE = "2026-02-27T00:00:00Z";
-export const REVEAL_DATE = "2026-02-27T00:00:00Z";
+export const LOCK_DATE = "2026-02-28T14:00:00+01:00Z";
+export const REVEAL_DATE = "2026-02-28T14:00:00+01:00Z";
 
 // --- API FUNCTIONS ---
 
@@ -427,17 +427,50 @@ export async function autocompleteRiders(query, season = 2026) {
       rider_prices(season_year, price)
     `)
     .ilike("rider_name", `%${query}%`)
-    .limit(10);
+    .limit(20); // increased limit
 
   if (error) return [];
 
-  return data.map(r => {
+  const results = data.map(r => {
     const priceObj = r.rider_prices?.find(p => p.season_year === season);
     return {
       ...r,
       price: priceObj ? priceObj.price : 0
     };
   });
+
+  // Sort by price desc
+  results.sort((a, b) => b.price - a.price);
+  return results;
+}
+
+export async function getTopRiders(season = 2026) {
+  if (OFFLINE_MODE) return [];
+
+  // Fetch riders with their prices
+  const { data, error } = await getSupabase()
+    .from("riders")
+    .select(`
+      *,
+      rider_prices(season_year, price)
+    `);
+
+  if (error) return [];
+
+  const results = data.map(r => {
+    const priceObj = r.rider_prices?.find(p => p.season_year === season);
+    return {
+      ...r,
+      price: priceObj ? priceObj.price : 0
+    };
+  });
+
+  // Filter out those with 0 price (if any) or just sort
+  // Sort by price desc
+  results.sort((a, b) => b.price - a.price);
+
+  // Return top 50
+  return results.slice(0, 50);
 }
 
 export async function getHistory() {
