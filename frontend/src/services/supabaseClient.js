@@ -8,7 +8,10 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.warn("Missing REACT_APP_SUPABASE_URL or REACT_APP_SUPABASE_ANON_KEY");
 }
 
-let supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 
 export function getSupabase() {
     return supabase;
