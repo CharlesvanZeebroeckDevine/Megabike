@@ -52,11 +52,11 @@ const HomePage = () => {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Latest Race */}
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h2 className="mb-4 text-lg font-bold text-slate-800">Latest Race</h2>
-                        {loading && <p className="text-slate-500">Loading…</p>}
+                        <h2 className="mb-4 text-lg font-bold text-slate-800">Dernière Course</h2>
+                        {loading && <p className="text-slate-500">Chargement...</p>}
                         {error && <p className="text-red-600">{error}</p>}
                         {!loading && !latestRace && (
-                            <p className="text-slate-500">No race results available yet.</p>
+                            <p className="text-slate-500">Pas encore de résultats de course disponibles.</p>
                         )}
                         {!!latestRace && (
                             <div>
@@ -74,7 +74,7 @@ const HomePage = () => {
                                         ))}
                                     </ol>
                                 ) : (
-                                    <p className="text-sm text-slate-500">No results yet.</p>
+                                    <p className="text-sm text-slate-500">Pas encore de résultats.</p>
                                 )}
                             </div>
                         )}
@@ -82,17 +82,17 @@ const HomePage = () => {
 
                     {/* Next Race */}
                     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h2 className="mb-4 text-lg font-bold text-slate-800">Next Race</h2>
-                        {loading && <p className="text-slate-500">Loading…</p>}
+                        <h2 className="mb-4 text-lg font-bold text-slate-800">Prochaine Course</h2>
+                        {loading && <p className="text-slate-500">Chargement...</p>}
                         {!loading && !nextRace && (
-                            <p className="text-slate-500">No upcoming races found.</p>
+                            <p className="text-slate-500">Aucune course à venir trouvée.</p>
                         )}
                         {!!nextRace && (
                             <div>
                                 <div className="text-xl font-bold text-blue-600">{nextRace.name}</div>
                                 <div className="mt-2 text-slate-600">{nextRace.date}</div>
                                 <div className="mt-4 rounded-md bg-blue-50 p-4 text-sm text-blue-800">
-                                    Get your team ready!
+                                    Préparez votre équipe !
                                 </div>
                             </div>
                         )}

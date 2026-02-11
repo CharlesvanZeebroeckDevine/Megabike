@@ -43,7 +43,7 @@ export default function ProfileHubPage() {
 
         // Basic Validation
         if (!form.displayName.trim()) {
-            setError("Display Name cannot be empty.");
+            setError("Le nom d'affichage ne peut pas être vide.");
             setSaving(false);
             return;
         }
@@ -52,24 +52,24 @@ export default function ProfileHubPage() {
             await updateMe({
                 displayName: form.displayName,
             });
-            setSuccess("Profile updated successfully.");
+            setSuccess("Profil mis à jour avec succès.");
         } catch (err) {
             console.error(err);
-            setError("Failed to update profile. Please try again.");
+            setError("Échec de la mise à jour du profil. Veuillez réessayer.");
         } finally {
             setSaving(false);
         }
     };
 
     if (loading) {
-        return <div className="p-8 text-slate-500">Loading profile...</div>;
+        return <div className="p-8 text-slate-500">Chargement du profil...</div>;
     }
 
     return (
         <div className="mx-auto max-w-2xl space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Profile Settings</h1>
-                <p className="text-slate-600">Typically managed by your authentication provider, but you can override details here.</p>
+                <h1 className="text-2xl font-bold text-slate-900">Paramètres de Profil</h1>
+                <p className="text-slate-600">Géré par votre fournisseur d'authentification, mais vous pouvez modifier les détails ici.</p>
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -81,7 +81,7 @@ export default function ProfileHubPage() {
 
                     {/* Display Name */}
                     <div>
-                        <label htmlFor="displayName" className="block text-sm font-medium text-slate-700">Display Name</label>
+                        <label htmlFor="displayName" className="block text-sm font-medium text-slate-700">Nom d'affichage</label>
                         <input
                             type="text"
                             id="displayName"
@@ -89,7 +89,7 @@ export default function ProfileHubPage() {
                             value={form.displayName}
                             onChange={handleChange}
                             className="mt-1 block w-full rounded-md border-slate-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border"
-                            placeholder="e.g. Eddy Merckx"
+                            placeholder="ex. Eddy Merckx"
                         />
                     </div>
 
@@ -101,16 +101,16 @@ export default function ProfileHubPage() {
                             disabled={saving}
                             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
                         >
-                            {saving ? "Saving..." : "Save Changes"}
+                            {saving ? "Enregistrement..." : "Enregistrer"}
                         </button>
                     </div>
                 </form>
             </div>
 
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm mt-8">
-                <h3 className="text-lg font-medium text-red-900">Sign Out</h3>
+                <h3 className="text-lg font-medium text-red-900">Se Déconnecter</h3>
                 <p className="mt-1 text-sm text-red-700">
-                    Sign out of your session on this device.
+                    Déconnectez-vous de votre session sur cet appareil.
                 </p>
                 <div className="mt-4">
                     <button
@@ -122,7 +122,7 @@ export default function ProfileHubPage() {
                         }}
                         className="rounded-md bg-white border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition-colors"
                     >
-                        Log Out
+                        Déconnexion
                     </button>
                 </div>
             </div>

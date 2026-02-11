@@ -32,15 +32,15 @@ export default function TeamBuilder({ onSubmit, isSubmitting, season, initialTea
     }
 
     function validate() {
-        if (teamName.trim().length < 2) return "Team name is required.";
+        if (teamName.trim().length < 2) return "Le nom de l'équipe est requis.";
         // Relaxed validation: check if at least one rider is picked
         const pickedRiders = slots.filter(Boolean);
-        if (pickedRiders.length === 0) return "Please pick at least one rider.";
+        if (pickedRiders.length === 0) return "Veuillez choisir au moins un coureur.";
 
         const names = pickedRiders.map((s) => s?.rider_name);
         const unique = new Set(names);
-        if (unique.size !== names.length) return "Each rider must be unique.";
-        if (total > BUDGET) return `Budget exceeded by ${Math.abs(remaining)}.`;
+        if (unique.size !== names.length) return "Chaque coureur doit être unique.";
+        if (total > BUDGET) return `Budget dépassé de ${Math.abs(remaining)}.`;
         return null;
     }
 
@@ -52,13 +52,13 @@ export default function TeamBuilder({ onSubmit, isSubmitting, season, initialTea
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <h2 className="text-lg font-semibold">{isUpdate ? "Update your team" : "Create your team"}</h2>
+                    <h2 className="text-lg font-semibold">{isUpdate ? "Mettre à jour votre équipe" : "Créer votre équipe"}</h2>
                     <p className="text-sm text-slate-600">
-                        Budget: {BUDGET}. {isUpdate ? "You can update until the deadline." : "Create your team once."}
+                        Budget : {BUDGET}. {isUpdate ? "Vous pouvez mettre à jour jusqu'à la date limite." : "Créez votre équipe une fois."}
                     </p>
                 </div>
                 <div className="text-sm">
-                    <span className="text-slate-500">Remaining: </span>
+                    <span className="text-slate-500">Restant : </span>
                     <span className={remaining < 0 ? "font-semibold text-red-700" : "font-semibold text-slate-900"}>
                         {remaining}
                     </span>
@@ -67,13 +67,13 @@ export default function TeamBuilder({ onSubmit, isSubmitting, season, initialTea
 
             <div className="mt-4">
                 <label className="block text-sm font-medium text-slate-700">
-                    Team name
+                    Nom de l'équipe
                 </label>
                 <input
                     className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none"
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="e.g. Team Gilbert"
+                    placeholder="ex. Équipe Gilbert"
                 />
             </div>
 
@@ -94,13 +94,13 @@ export default function TeamBuilder({ onSubmit, isSubmitting, season, initialTea
                             </div>
                         </div>
                         <div className="text-sm text-slate-600 sm:col-span-3 sm:text-right flex items-center justify-end gap-3">
-                            <span>Cost: {r ? (r.price ?? r.points ?? 0) : "—"}</span>
+                            <span>Coût : {r ? (r.price ?? r.points ?? 0) : "—"}</span>
                             {r && !isSubmitting && (
                                 <button
                                     type="button"
                                     onClick={() => setSlot(idx, null)}
                                     className="text-slate-400 hover:text-red-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
-                                    title="Remove rider"
+                                    title="Retirer le coureur"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                                         <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -135,7 +135,7 @@ export default function TeamBuilder({ onSubmit, isSubmitting, season, initialTea
                         onSubmit?.(payload);
                     }}
                 >
-                    {isSubmitting ? "Saving…" : (isUpdate ? "Update Team" : "Create Team")}
+                    {isSubmitting ? "Enregistrement..." : (isUpdate ? "Mettre à jour l'équipe" : "Créer l'équipe")}
                 </button>
             </div>
         </div>

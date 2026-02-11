@@ -3,11 +3,12 @@ import * as MockApi from "./mockApi";
 import { debugLog } from "./debug";
 
 // Re-export common auth helpers for components
-export { getAuthToken, setAuthToken };
+export { getAuthToken, setAuthToken, parseJwt };
 
 // --- CONFIG ---
 const OFFLINE_MODE = process.env.REACT_APP_OFFLINE === "true";
-export const LOCK_DATE = "2026-02-21T00:00:00Z";
+export const LOCK_DATE = "2026-02-27T00:00:00Z";
+export const REVEAL_DATE = "2026-02-27T00:00:00Z";
 
 // --- API FUNCTIONS ---
 
@@ -24,7 +25,7 @@ export async function verifyAccessCode(accessCode) {
 
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.error || "Login failed");
+      throw new Error(err.error || "La connexion a échoué");
     }
 
     const data = await res.json();
@@ -41,10 +42,10 @@ export async function getMe() {
   if (OFFLINE_MODE) return MockApi.mockGetMe();
 
   const token = getAuthToken();
-  if (!token) throw new Error("Not authenticated");
+  if (!token) throw new Error("Non authentifié");
 
   const jwt = parseJwt(token);
-  if (!jwt || !jwt.sub) throw new Error("Invalid token");
+  if (!jwt || !jwt.sub) throw new Error("Jeton invalide");
 
   const userId = jwt.sub;
 
@@ -74,9 +75,9 @@ export async function updateMe(payload) {
   if (OFFLINE_MODE) return MockApi.mockUpdateMe(payload);
 
   const token = getAuthToken();
-  if (!token) throw new Error("Not authenticated");
+  if (!token) throw new Error("Non authentifié");
   const jwt = parseJwt(token);
-  if (!jwt || !jwt.sub) throw new Error("Invalid token");
+  if (!jwt || !jwt.sub) throw new Error("Jeton invalide");
   const userId = jwt.sub;
 
   const updates = {};
@@ -222,7 +223,7 @@ function checkLockDate() {
   const now = new Date();
   const lock = new Date(LOCK_DATE);
   if (now > lock) {
-    throw new Error("Team creation/updates are locked for this season.");
+    throw new Error("La création/mise à jour d'équipe est verrouillée pour cette saison.");
   }
 }
 
@@ -231,9 +232,9 @@ export async function createMyTeam(payload, season = 2026) {
   checkLockDate();
 
   const token = getAuthToken();
-  if (!token) throw new Error("Not authenticated");
+  if (!token) throw new Error("Non authentifié");
   const jwt = parseJwt(token);
-  if (!jwt || !jwt.sub) throw new Error("Invalid token");
+  if (!jwt || !jwt.sub) throw new Error("Jeton invalide");
   const userId = jwt.sub;
 
   const riderIds = payload.riders.map(r => r.id).filter(Boolean);
@@ -252,7 +253,7 @@ export async function createMyTeam(payload, season = 2026) {
   for (let i = 0; i < payload.riders.length; i++) {
     const inputRider = payload.riders[i];
     const dbRider = riderMap.get(inputRider.id);
-    if (!dbRider) throw new Error(`Rider not found: ${inputRider.rider_name}`);
+    if (!dbRider) throw new Error(`Coureur non trouvé : ${inputRider.rider_name}`);
 
     const priceObj = dbRider.rider_prices?.find(p => p.season_year === season);
     const price = priceObj ? priceObj.price : 0;
@@ -290,7 +291,7 @@ export async function updateMyTeam(teamId, payload, season = 2026) {
   checkLockDate();
 
   const token = getAuthToken();
-  if (!token) throw new Error("Not authenticated");
+  if (!token) throw new Error("Non authentifié");
 
   const riderIds = payload.riders.map(r => r.id).filter(Boolean);
   const { data: dbRiders, error: ridersFetchErr } = await getSupabase()
@@ -307,7 +308,7 @@ export async function updateMyTeam(teamId, payload, season = 2026) {
   for (let i = 0; i < payload.riders.length; i++) {
     const inputRider = payload.riders[i];
     const dbRider = riderMap.get(inputRider.id);
-    if (!dbRider) throw new Error(`Rider not found: ${inputRider.rider_name}`);
+    if (!dbRider) throw new Error(`Coureur non trouvé : ${inputRider.rider_name}`);
 
     const priceObj = dbRider.rider_prices?.find(p => p.season_year === season);
     totalCost += (priceObj ? priceObj.price : 0);
@@ -392,14 +393,16 @@ export async function getTeamById(teamId, season = 2026) {
 
   return {
     id: team.id,
+    userId: team.user_id,
     teamName: team.team_name,
     ownerName: team.users?.display_name,
     points: team.points,
     totalPrice: team.total_cost,
+    season: team.season_year,
     riders: (teamRiders || []).map(tr => {
       const r = tr.riders;
-      const priceObj = r.rider_prices?.find(p => p.season_year === season);
-      const pointsObj = r.rider_points?.find(p => p.season_year === season);
+      const priceObj = r.rider_prices?.find(p => p.season_year === team.season_year);
+      const pointsObj = r.rider_points?.find(p => p.season_year === team.season_year);
 
       return {
         id: r.id,
@@ -441,4 +444,82 @@ export async function getHistory() {
   if (OFFLINE_MODE) return MockApi.mockHistory();
   await getSupabase().from("seasons").select("*").order("season_year", { ascending: false });
   return { podium: [], mostTitles: [] }; // placeholder
+}
+
+export async function getAllRaces(season = 2026) {
+  if (OFFLINE_MODE) return [];
+
+  const startYear = `${season}-01-01`;
+  const endYear = `${season}-12-31`;
+
+  const { data: races, error } = await getSupabase()
+    .from("races")
+    .select("id, name, race_date")
+    .gte("race_date", startYear)
+    .lte("race_date", endYear)
+    .order("race_date", { ascending: true }); // chronological order for dropdown
+
+  if (error) throw error;
+  return races || [];
+}
+
+export async function getRaceLeaderboard(raceId, season = 2026) {
+  if (OFFLINE_MODE) return [];
+
+  // 1. Fetch race results
+  const { data: raceResults, error: rrErr } = await getSupabase()
+    .from("race_results")
+    .select("rider_id, points_awarded")
+    .eq("race_id", raceId);
+
+  if (rrErr) throw rrErr;
+  if (!raceResults || raceResults.length === 0) return [];
+
+  // 2. Fetch all teams for the season (to map riders to teams)
+  // Optimization: In a real app with many users, we would filter teams that actually have these riders,
+  // or use a DB view. For now, fetch all active teams for the season.
+  const { data: teams, error: teamErr } = await getSupabase()
+    .from("teams")
+    .select("id, team_name, users(display_name)")
+    .eq("season_year", season);
+
+  if (teamErr) throw teamErr;
+
+  // 3. Fetch team_riders for these teams
+  const { data: teamRiders, error: trErr } = await getSupabase()
+    .from("team_riders")
+    .select("team_id, rider_id")
+    .in("team_id", teams.map(t => t.id));
+
+  if (trErr) throw trErr;
+
+  // 4. Calculate points
+  const riderPoints = {}; // riderId -> points
+  for (const res of raceResults) {
+    riderPoints[res.rider_id] = res.points_awarded;
+  }
+
+  const teamScores = []; // [{ team, points }]
+
+  for (const team of teams) {
+    // Find riders for this team
+    const riders = teamRiders.filter(tr => tr.team_id === team.id);
+    let score = 0;
+    for (const tr of riders) {
+      score += (riderPoints[tr.rider_id] || 0);
+    }
+
+    if (score > 0) {
+      teamScores.push({
+        id: team.id,
+        teamName: team.team_name,
+        ownerName: team.users?.display_name,
+        points: score
+      });
+    }
+  }
+
+  // Sort by points desc
+  teamScores.sort((a, b) => b.points - a.points);
+  return teamScores;
 }

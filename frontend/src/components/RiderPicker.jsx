@@ -38,7 +38,7 @@ export default function RiderPicker({ value, onChange, disabled, season }) {
       <input
         disabled={disabled}
         className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-900 focus:outline-none disabled:bg-slate-100"
-        placeholder="Start typing a rider name…"
+        placeholder="Commencez à taper le nom d'un coureur..."
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -68,7 +68,7 @@ export default function RiderPicker({ value, onChange, disabled, season }) {
                 }}
               >
                 <span className="text-slate-900">{r.rider_name}</span>
-                <span className="text-slate-500">{price} cost</span>
+                <span className="text-slate-500">{price} coût</span>
               </button>
             );
           })}

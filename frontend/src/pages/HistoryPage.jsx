@@ -60,12 +60,12 @@ export default function HistoryPage() {
     return (
         <div className="space-y-4">
             <div>
-                <h1 className="text-2xl font-semibold">Podium History</h1>
-                <p className="mt-1 text-slate-600">Hall of Fame since 2004.</p>
+                <h1 className="text-2xl font-semibold">Historique des Podiums</h1>
+                <p className="mt-1 text-slate-600">Hall of Fame depuis 2004.</p>
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                {loading ? <div className="text-sm text-slate-600">Loading…</div> : null}
+                {loading ? <div className="text-sm text-slate-600">Chargement...</div> : null}
                 {error ? <div className="text-sm text-red-700">{error}</div> : null}
 
                 {!loading && !error ? (
@@ -73,10 +73,10 @@ export default function HistoryPage() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-slate-200 text-left text-slate-500">
-                                    <th className="py-2 pr-4">Year</th>
-                                    <th className="py-2 pr-4">Winner</th>
-                                    <th className="py-2 pr-4">2nd</th>
-                                    <th className="py-2 pr-4">3rd</th>
+                                    <th className="py-2 pr-4">Année</th>
+                                    <th className="py-2 pr-4">Vainqueur</th>
+                                    <th className="py-2 pr-4">2ème</th>
+                                    <th className="py-2 pr-4">3ème</th>
                                 </tr>
                             </thead>
                             <tbody>

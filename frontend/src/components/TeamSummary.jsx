@@ -7,10 +7,10 @@ export default function TeamSummary({ me, team, onEdit }) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold">
-              {team?.teamName ?? "Your team"}
+              {team?.teamName ?? "Votre équipe"}
             </h2>
             <div className="text-sm text-slate-600">
-              Logged in as: {me?.displayName ?? me?.id ?? "user"}
+              Connecté en tant que : {me?.displayName ?? me?.id ?? "utilisateur"}
             </div>
           </div>
           {onEdit && (
@@ -19,7 +19,7 @@ export default function TeamSummary({ me, team, onEdit }) {
               className="text-sm text-blue-600 hover:text-blue-800 underline font-medium"
               onClick={onEdit}
             >
-              Edit Team
+              Modifier l'équipe
             </button>
           )}
         </div>
@@ -35,7 +35,7 @@ export default function TeamSummary({ me, team, onEdit }) {
           </div>
           <div className="rounded-lg bg-slate-50 p-4">
             <div className="text-xs uppercase tracking-wide text-slate-500">
-              Total cost
+              Coût total
             </div>
             <div className="mt-1 text-2xl font-semibold text-slate-900">
               {team?.totalPrice ?? 0}
@@ -43,7 +43,7 @@ export default function TeamSummary({ me, team, onEdit }) {
           </div>
           <div className="rounded-lg bg-slate-50 p-4">
             <div className="text-xs uppercase tracking-wide text-slate-500">
-              Season
+              Saison
             </div>
             <div className="mt-1 text-2xl font-semibold text-slate-900">
               {team?.season ?? "—"}
@@ -53,15 +53,15 @@ export default function TeamSummary({ me, team, onEdit }) {
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-sm font-semibold text-slate-900">Riders</h3>
+        <h3 className="text-sm font-semibold text-slate-900">Coureurs</h3>
         <div className="mt-3 overflow-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-left text-slate-500">
                 <th className="py-2 pr-4">#</th>
-                <th className="py-2 pr-4">Rider</th>
+                <th className="py-2 pr-4">Coureur</th>
                 <th className="py-2 pr-4 text-right">Points</th>
-                <th className="py-2 pr-4 text-right">Cost</th>
+                <th className="py-2 pr-4 text-right">Coût</th>
               </tr>
             </thead>
             <tbody>
@@ -77,7 +77,7 @@ export default function TeamSummary({ me, team, onEdit }) {
           </table>
         </div>
         <div className="mt-3 text-xs text-slate-500">
-          This team will be locked after 28/02/2026.
+          Cette équipe sera verrouillée après le 28/02/2026.
         </div>
       </div>
     </div>

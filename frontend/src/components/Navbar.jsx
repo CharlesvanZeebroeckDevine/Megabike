@@ -63,11 +63,12 @@ function NavLinks({ mobile, onClick }) {
 
     return (
         <>
-            <NavigationLink to="/" onClick={onClick} baseClass={baseClass}>Home</NavigationLink>
-            <NavigationLink to="/my-team" onClick={onClick} baseClass={baseClass}>My Team</NavigationLink>
-            <NavigationLink to="/history" onClick={onClick} baseClass={baseClass}>History</NavigationLink>
-            <NavigationLink to="/leaderboard" onClick={onClick} baseClass={baseClass}>Leaderboard</NavigationLink>
-            <NavigationLink to="/profile" onClick={onClick} baseClass={baseClass}>Profile</NavigationLink>
+            <NavigationLink to="/" onClick={onClick} baseClass={baseClass}>Accueil</NavigationLink>
+            <NavigationLink to="/my-team" onClick={onClick} baseClass={baseClass}>Mon Équipe</NavigationLink>
+            <NavigationLink to="/calendar" onClick={onClick} baseClass={baseClass}>Calendrier</NavigationLink>
+            <NavigationLink to="/rules" onClick={onClick} baseClass={baseClass}>Règles</NavigationLink>
+            <NavigationLink to="/leaderboard" onClick={onClick} baseClass={baseClass}>Classement</NavigationLink>
+            <NavigationLink to="/profile" onClick={onClick} baseClass={baseClass}>Profil</NavigationLink>
         </>
     );
 }

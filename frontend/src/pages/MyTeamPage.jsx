@@ -12,6 +12,8 @@ import {
 import { useSeason } from "../context/SeasonContext";
 import { useTeamData } from "../hooks/useTeamData";
 
+import SeasonSelector from "../components/SeasonSelector";
+
 export default function MyTeamPage() {
   const { season } = useSeason();
   const [token, setToken] = React.useState(getAuthToken());
@@ -43,7 +45,7 @@ export default function MyTeamPage() {
       setToken(res.token);
       debugLog("Verified access code", res.user);
     } catch (e) {
-      setDataError(e?.message || "Invalid code (or backend not running yet).");
+      setDataError(e?.message || "Code invalide.");
       debugLog("verifyAccessCode error", e?.message ?? e);
     } finally {
       setFormLoading(false);
@@ -62,13 +64,16 @@ export default function MyTeamPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">My Team ({season})</h1>
-        <p className="mt-1 text-slate-600">
-          {season === 2026
-            ? `Manage your team for the 2026 season. Locked since ${new Date(LOCK_DATE).toLocaleDateString()}.`
-            : "Viewing historical team."}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Mon Équipe ({season})</h1>
+          <p className="mt-1 text-slate-600">
+            {season === 2026
+              ? `Verrouillée a partir du 28 Février (2026-02-28T00:00:00Z)`
+              : "Visualisation d'équipe archivée."}
+          </p>
+        </div>
+        <SeasonSelector />
       </div>
 
       {!authed ? (
@@ -79,7 +84,7 @@ export default function MyTeamPage() {
         />
       ) : loading && !team ? (
         <div className="p-8 text-center text-slate-500 animate-pulse">
-          Loading your team...
+          Chargement de votre équipe...
         </div>
       ) : team && !isEditing ? (
         <TeamSummary
