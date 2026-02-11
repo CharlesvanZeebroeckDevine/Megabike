@@ -1,0 +1,10 @@
+.env
+.venv/
+venv/
+build
+
+.yarn
+node_modules
+__pycache__
+.vercel
+.env*.local
