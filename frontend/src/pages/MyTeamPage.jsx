@@ -69,7 +69,7 @@ export default function MyTeamPage() {
           <h1 className="text-2xl font-semibold">Mon Équipe ({season})</h1>
           <p className="mt-1 text-slate-600">
             {season === 2026
-              ? `Verrouillée a partir du 28 Février 14h00`
+              ? `Verrouillée a partir du 27 Février minuit`
               : "Visualisation d'équipe archivée."}
           </p>
         </div>

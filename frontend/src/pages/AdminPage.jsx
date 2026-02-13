@@ -9,6 +9,49 @@ export default function AdminPage() {
     const [genCount, setGenCount] = useState(1);
     const [genPrefix, setGenPrefix] = useState("MB26-");
 
+    // Edit state
+    const [editId, setEditId] = useState(null);
+    const [editName, setEditName] = useState("");
+
+    const startEdit = (user) => {
+        setEditId(user.id);
+        setEditName(user.display_name);
+    };
+
+    const cancelEdit = () => {
+        setEditId(null);
+        setEditName("");
+    };
+
+    const saveEdit = async (userId) => {
+        if (!editName.trim()) return;
+        setLoading(true);
+        try {
+            const res = await fetch("/api/admin", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    password
+                },
+                body: JSON.stringify({ userId, displayName: editName })
+            });
+
+            if (res.ok) {
+                // Refresh list
+                const listRes = await fetch("/api/admin", { headers: { password } });
+                const listData = await listRes.json();
+                setCodes(listData.codes);
+                cancelEdit();
+            } else {
+                alert("Erreur de mise à jour");
+            }
+        } catch (err) {
+            alert("Erreur réseau");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const login = async (e) => {
         e?.preventDefault();
         setLoading(true);
@@ -135,11 +178,44 @@ export default function AdminPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {codes.map((code) => (
-                            <tr key={code.id} className="hover:bg-slate-50">
+                            <tr key={code.id} className="group hover:bg-slate-50">
                                 <td className="px-4 py-3 font-mono font-medium">{code.code}</td>
                                 <td className="px-4 py-3">
                                     {code.users ? (
-                                        <span className="font-medium text-slate-900">{code.users.display_name}</span>
+                                        <div className="flex items-center gap-2">
+                                            {editId === code.users.id ? (
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        className="rounded border border-slate-300 px-2 py-1 text-sm"
+                                                        value={editName}
+                                                        onChange={(e) => setEditName(e.target.value)}
+                                                    />
+                                                    <button
+                                                        onClick={() => saveEdit(code.users.id)}
+                                                        className="text-green-600 hover:text-green-700"
+                                                        disabled={loading}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        onClick={cancelEdit}
+                                                        className="text-slate-400 hover:text-slate-500"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium text-slate-900">{code.users.display_name}</span>
+                                                    <button
+                                                        onClick={() => startEdit(code.users)}
+                                                        className="text-blue-600 opacity-0 hover:text-blue-700 group-hover:opacity-100 transition-opacity text-xs"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     ) : (
                                         <span className="text-slate-400 italic">Non assigné</span>
                                     )}

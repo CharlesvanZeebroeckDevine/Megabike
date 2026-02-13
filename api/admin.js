@@ -4,7 +4,7 @@ module.exports = async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT');
     res.setHeader(
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
@@ -86,6 +86,25 @@ module.exports = async function handler(req, res) {
             }
 
             return res.status(200).json({ created: newCodes });
+        }
+
+        if (req.method === 'PUT') {
+            const { userId, displayName } = req.body;
+
+            if (!userId || !displayName) {
+                return res.status(400).json({ error: 'Missing userId or displayName' });
+            }
+
+            // Update user
+            const { data, error } = await supabase
+                .from('users')
+                .update({ display_name: displayName })
+                .eq('id', userId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return res.status(200).json({ user: data });
         }
 
         return res.status(405).json({ error: 'Method not allowed' });
