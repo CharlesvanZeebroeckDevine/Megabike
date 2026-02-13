@@ -77,7 +77,7 @@ export default function TeamSummary({ me, team, onEdit }) {
           </table>
         </div>
         <div className="mt-3 text-xs text-slate-500">
-          Cette équipe sera verrouillée après le 28/02/2026.
+          Cette équipe sera verrouillée après le 27/02/2026.
         </div>
       </div>
     </div>
